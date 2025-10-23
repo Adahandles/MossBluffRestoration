@@ -219,6 +219,7 @@
     var govParcelsLayer;
     var citraParcelsLayer;
     var orangeSpringsLayer; // Layer for Orange Springs project
+    var seminoleSpringsLayer; // Layer for Seminole Springs project
     // Flag to ensure the Land Owners overlay is added only once
     var landOwnersOverlayAdded = false;
 
@@ -227,7 +228,7 @@
       var bounds = null;
       // Extend bounds to include any loaded layers.  This ensures the map zooms
       // appropriately when multiple parcels are present.
-      [userParcelsLayer, govParcelsLayer, citraParcelsLayer, orangeSpringsLayer].forEach(function (layer) {
+      [userParcelsLayer, govParcelsLayer, citraParcelsLayer, orangeSpringsLayer, seminoleSpringsLayer].forEach(function (layer) {
         if (layer) {
           bounds = bounds ? bounds.extend(layer.getBounds()) : layer.getBounds();
         }
@@ -377,6 +378,31 @@
         });
         orangeSpringsLayer.addTo(map);
         layerControl.addOverlay(orangeSpringsLayer, 'Orange Springs Parcels');
+        maybeFitToParcels();
+      });
+
+    // Load Seminole Springs project parcels from provided data and add as a distinct overlay
+    fetch('seminolesprings.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        seminoleSpringsLayer = L.geoJSON(data, {
+          style: function () {
+            // Use a distinct green color for Seminole Springs
+            return { color: '#32a852', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Seminole Springs Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        seminoleSpringsLayer.addTo(map);
+        layerControl.addOverlay(seminoleSpringsLayer, 'Seminole Springs Parcels');
         maybeFitToParcels();
       });
 
