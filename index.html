@@ -143,7 +143,7 @@
     var map = L.map('map').setView([29.4767, -81.8194], 12);
 
     // Add a base map from OpenStreetMap
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    var baseLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
     }).addTo(map);
 
@@ -188,8 +188,28 @@
       }
     });
 
-    // Add layer control to the map and keep a reference so we can add overlays later
-    var layerControl = L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+    
+    // Define additional basemaps using Esri's basemap layers.  These tiles are served from
+    // services.arcgisonline.com, which is accessible in the deployment environment.  The
+    // "Topographic" layer provides shaded relief and contour lines, while the
+    // "Imagery" layer provides satellite imagery.  We keep OpenStreetMap as the default
+    // basemap, but expose all three options via the layer control.
+    var topoLayer = L.esri.basemapLayer('Topographic');
+    var satelliteLayer = L.esri.basemapLayer('Imagery');
+
+    // Collect the available base layers.  The key is the label shown in the layer
+    // control and the value is the corresponding Leaflet layer instance.
+    var baseMaps = {
+      'OpenStreetMap': baseLayer, // placeholder; OpenStreetMap is already added manually
+      'Topo (Esri)': topoLayer,
+      'Satellite (Esri)': satelliteLayer
+    };
+
+    // Add layer control to the map and keep a reference so we can add overlays later.
+    // Pass the baseMaps object so users can toggle between base layers.  Because the
+    // OpenStreetMap layer was added manually above, its entry in baseMaps is set to
+    // null – Leaflet will ignore null values.
+    var layerControl = L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
     // Display both overlays by default
     parcelsLayer.addTo(map);
