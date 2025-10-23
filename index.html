@@ -4,11 +4,10 @@
   <meta charset="UTF‑8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moss Bluff Restoration Project</title>
-  <!-- Leaflet base CSS -->
+  <!-- Leaflet base CSS (loaded from a more reliable CDN) -->
   <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44c="
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
     crossorigin=""
   />
   <style>
@@ -133,13 +132,12 @@
     &copy; 2025 Fountara, LLC. All rights reserved.
   </footer>
 
-  <!-- Leaflet JS and Esri Leaflet Plugin -->
+  <!-- Leaflet JS and Esri Leaflet Plugin (loaded from CDNs accessible in restricted environments) -->
   <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-pf19OooF7ho+glP14RC0Lz6wD8NS1KDHtvzE0ysZPNE="
+    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
     crossorigin=""
   ></script>
-  <script src="https://unpkg.com/esri-leaflet@3.0.9/dist/esri-leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/esri-leaflet@3.0.9/dist/esri-leaflet.js"></script>
   <script>
     // Initialize the map and set a reasonable default view near Moss Bluff, FL
     var map = L.map('map').setView([29.4767, -81.8194], 12);
