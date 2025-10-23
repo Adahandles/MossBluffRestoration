@@ -175,11 +175,23 @@
     parcelsLayer.addTo(map);
     floodLayer.addTo(map);
 
+    // We'll store references to parcel layers so we can zoom to their bounds once both are loaded
+    var userParcelsLayer;
+    var govParcelsLayer;
+
+    // Helper function to fit the map bounds once both parcel layers are available
+    function maybeFitToParcels() {
+      if (userParcelsLayer && govParcelsLayer) {
+        var bounds = userParcelsLayer.getBounds().extend(govParcelsLayer.getBounds());
+        map.fitBounds(bounds);
+      }
+    }
+
     // Load and highlight the user-selected parcels from a GeoJSON file
     fetch('user_parcels.geojson')
       .then(function (response) { return response.json(); })
       .then(function (data) {
-        var userParcelsLayer = L.geoJSON(data, {
+        userParcelsLayer = L.geoJSON(data, {
           style: function (feature) {
             return { color: '#e60000', weight: 2, fillOpacity: 0.2 };
           },
@@ -196,13 +208,15 @@
         });
         userParcelsLayer.addTo(map);
         layerControl.addOverlay(userParcelsLayer, 'User Parcels');
+        // Try to fit bounds if both layers are loaded
+        maybeFitToParcels();
       });
 
     // Load and highlight government parcels from a GeoJSON file
     fetch('gov_parcels.geojson')
       .then(function (response) { return response.json(); })
       .then(function (data) {
-        var govParcelsLayer = L.geoJSON(data, {
+        govParcelsLayer = L.geoJSON(data, {
           style: function (feature) {
             return { color: '#00782b', weight: 2, fillOpacity: 0.2 };
           },
@@ -219,6 +233,8 @@
         });
         govParcelsLayer.addTo(map);
         layerControl.addOverlay(govParcelsLayer, 'Government Parcels');
+        // Try to fit bounds if both layers are loaded
+        maybeFitToParcels();
       });
 
   </script>
