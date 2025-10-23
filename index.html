@@ -198,6 +198,8 @@
     // We'll store references to parcel layers so we can zoom to their bounds once both are loaded
     var userParcelsLayer;
     var govParcelsLayer;
+    // Flag to ensure the Land Owners overlay is added only once
+    var landOwnersOverlayAdded = false;
 
     // Helper function to fit the map bounds once both parcel layers are available
     function maybeFitToParcels() {
@@ -228,7 +230,11 @@
           }
         });
         userParcelsLayer.addTo(map);
-        layerControl.addOverlay(userParcelsLayer, 'Land Owners');
+        // Add the Land Owners overlay only once to avoid duplicate toggles
+        if (!landOwnersOverlayAdded) {
+          layerControl.addOverlay(userParcelsLayer, 'Land Owners');
+          landOwnersOverlayAdded = true;
+        }
         // Try to fit bounds if both layers are loaded
         maybeFitToParcels();
       });
@@ -286,7 +292,11 @@
             }
           });
           userParcelsLayer.addTo(map);
-          layerControl.addOverlay(userParcelsLayer, 'Land Owners');
+          // Add the Land Owners overlay only once to avoid duplicate toggles
+          if (!landOwnersOverlayAdded) {
+            layerControl.addOverlay(userParcelsLayer, 'Land Owners');
+            landOwnersOverlayAdded = true;
+          }
         }
         // Try to fit bounds once both land owner and government layers are loaded
         maybeFitToParcels();
