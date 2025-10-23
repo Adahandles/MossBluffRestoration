@@ -156,10 +156,11 @@
 
     // FEMA flood zones from the Marion County GIS open data site (MapServer)
     var floodLayer = L.esri.dynamicMapLayer({
-      // Updated to use the Marion County GIS server rather than ArcGIS Online.
-    // The previous URL (services1.arcgis.com) returned an Invalid URL error.
+      // Updated to use specific sublayers from the Marion County GIS server rather than ArcGIS Online.
+      // Specifying layer IDs ensures the flood zones are visible and can be toggled in the layer control.
       url: 'https://gis.marionfl.org/public/rest/services/General/Flood_Zones/MapServer',
-      opacity: 0.5
+      layers: [2, 3, 6, 7], // FEMA Flood Zones 2017 (IDs 2 & 3) and Flood Prone/Transitional Areas (IDs 6 & 7)
+      opacity: 0.6
     });
 
     // Define overlay collection for the layer control
