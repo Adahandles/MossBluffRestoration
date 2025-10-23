@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8" />
+  <meta charset="UTF‑" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moss Bluff Restoration Project</title>
   <!-- Leaflet base CSS -->
@@ -109,17 +109,13 @@
       <p>Download and review our project documents below. The following files are stored in the root of this repository and will open in your browser or download, depending on your device.</p>
       <div class="doc-links">
         <ul>
-               <div class="doc-links">
-          <ul>
-             <div class="doc-links">
-        <div class="doc-links">
-  <ul>
-            <li><a href="./MossBluff_Grant_Proposal.pdf" target="_blank">Grant Proposal (PDF)</a></li>
-            <li><a href="./MossBluff_Restoration_Brief.pdf" target="_blank">Restoration Brief (PDF)</a></li>
-            <li><a href="./MossBluff_Conditional_Purchase_and_Grant_Plan.pdf" target="_blank">Conditional Purchase &amp; Grant Plan (PDF)</a></li>
-            <li><a href="./MossBluff_Contractor_Checklist.pdf" target="_blank">Contractor Document Checklist (PDF)</a></li>
-         </ul>
-        </div>n>
+          <li><a href="./MossBluff_Grant_Proposal.pdf" target="_blank">Grant Proposal (PDF)</a></li>
+          <li><a href="./MossBluff_Restoration_Brief.pdf" target="_blank">Restoration Brief (PDF)</a></li>
+          <li><a href="./MossBluff_Conditional_Purchase_and_Grant_Plan.pdf" target="_blank">Conditional Purchase &amp; Grant Plan (PDF)</a></li>
+          <li><a href="./MossBluff_Contractor_Checklist.pdf" target="_blank">Contractor Document Checklist (PDF)</a></li>
+        </ul>
+      </div>
+    </section>
 
     <section id="contact">
       <h2>Contact &amp; Partnerships</h2>
@@ -161,7 +157,7 @@
 
     // FEMA flood zones from the Marion County GIS open data site (MapServer)
     var floodLayer = L.esri.dynamicMapLayer({
-      url: 'https://services1.arcgis.com/oMGpBoZpy1Db2sAl/arcgis/rest/services/FEMA_Flood_Zones_2017/MapServer',
+      url: 'https://gis.marionfl.org/public/rest/services/General/Flood_Zones/MapServer',
       opacity: 0.5
     });
 
