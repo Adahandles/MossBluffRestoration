@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF‑8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moss Bluff Restoration Project</title>
-  <!-- Leaflet CSS for the interactive map -->
+  <!-- Leaflet base CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -12,6 +12,7 @@
     crossorigin=""
   />
   <style>
+    /* Simple responsive layout */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -27,6 +28,7 @@
     }
     nav {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       background: #0e3145;
     }
@@ -73,7 +75,7 @@
 <body>
   <header>
     <h1>Moss Bluff Wetland Restoration Project</h1>
-    <p>Restoring and preserving the Moss Bluff wetlands through community-driven restoration and sustainable practices.</p>
+    <p>Restoring and preserving the Moss Bluff wetlands through community‑driven restoration and sustainable practices.</p>
   </header>
   <nav>
     <a href="#overview">Project Overview</a>
@@ -86,30 +88,31 @@
     <section id="overview">
       <h2>Project Overview</h2>
       <p>
-        The Moss Bluff Restoration Project aims to restore and enhance the wetland ecosystem on the Moss Bluff property in Florida. The project will mitigate flooding,
-        improve water quality, restore native vegetation, and provide educational and recreational opportunities. The restoration efforts are guided by research, local knowledge,
-        and collaboration with agencies and stakeholders.
+        The Moss Bluff Restoration Project aims to restore and enhance the wetland ecosystem on the Moss Bluff property in Florida.
+        The project will mitigate flooding, improve water quality, restore native vegetation, and provide educational and recreational
+        opportunities. Restoration efforts are guided by research, local knowledge, and collaboration with agencies and stakeholders.
       </p>
     </section>
 
     <section id="map">
       <h2>Interactive Restoration Map</h2>
       <p>
-        Use the map below to explore overlays showing flood zones, soil types, and parcel boundaries. Toggle layers on or off to visualize how the proposed restoration activities
-        intersect with existing site conditions. Zoom in or out and click on overlays for details.
+        Use the map below to explore overlays showing flood zones and parcel boundaries. Toggle layers on or off to visualize
+        how the proposed restoration activities intersect with existing site conditions. Zoom in or out and click on features
+        for details.
       </p>
       <div id="map"></div>
     </section>
 
     <section id="documents">
       <h2>Project Documents</h2>
-      <p>Download and review our project documents below:</p>
+      <p>Download and review our project documents below. These links point to documents stored in the <code>docs</code> directory of this repository.</p>
       <div class="doc-links">
         <ul>
-          <li><a href="./docs/Fountara_Moss_Bluff_Grant_Proposal_v1.docx">Grant Proposal</a></li>
-          <li><a href="./docs/Moss_Bluff_Wetland_Restoration_Brief.docx">Restoration Brief</a></li>
-          <li><a href="./docs/Moss_Bluff_Conditional_Purchase_and_Grantnomics_Plan.docx">Conditional Purchase &amp; Grant Plan</a></li>
-          <li><a href="./docs/Fountara_Contractor_Document_Checklist.docx">Contractor Document Checklist</a></li>
+          <li><a href="./docs/MossBluff_Grant_Proposal.pdf" target="_blank">Grant Proposal (PDF)</a></li>
+          <li><a href="./docs/MossBluff_Restoration_Brief.pdf" target="_blank">Restoration Brief (PDF)</a></li>
+          <li><a href="./docs/MossBluff_Conditional_Purchase_and_Grant_Plan.pdf" target="_blank">Conditional Purchase &amp; Grant Plan (PDF)</a></li>
+          <li><a href="./docs/MossBluff_Contractor_Checklist.pdf" target="_blank">Contractor Document Checklist (PDF)</a></li>
         </ul>
       </div>
     </section>
@@ -117,8 +120,9 @@
     <section id="contact">
       <h2>Contact &amp; Partnerships</h2>
       <p>
-        Interested in collaborating? If you represent an agency, nonprofit organization, academic institution, or private sector partner with interest in wetland restoration and
-        community resilience, we invite you to reach out. Together, we can restore and protect Moss Bluff wetlands.
+        Interested in collaborating? If you represent an agency, nonprofit organization, academic institution, or private sector partner
+        with interest in wetland restoration and community resilience, we invite you to reach out. Together, we can restore and protect
+        Moss Bluff wetlands.
       </p>
       <p>Email us at <a href="mailto:info@fountara.com">info@fountara.com</a></p>
     </section>
@@ -128,39 +132,47 @@
     &copy; 2025 Fountara, LLC. All rights reserved.
   </footer>
 
-  <!-- Leaflet JS and Plugin Scripts -->
+  <!-- Leaflet JS and Esri Leaflet Plugin -->
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-pf19OooF7ho+glP14RC0Lz6wD8NS1KDHtvzE0ysZPNE="
     crossorigin=""
   ></script>
+  <script src="https://unpkg.com/esri-leaflet@3.0.9/dist/esri-leaflet.js"></script>
   <script>
-    // Initialize the map and set default view to Moss Bluff (approximate coords)
-    var map = L.map('map').setView([29.4767, -81.8194], 13);
+    // Initialize the map and set a reasonable default view near Moss Bluff, FL
+    var map = L.map('map').setView([29.4767, -81.8194], 12);
 
-    // Add base layer using OpenStreetMap
+    // Add a base map from OpenStreetMap
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Load overlay images from the assets folder
-    var floodOverlay = L.imageOverlay('./assets/overlay_flood.png', [[29.470, -81.835], [29.485, -81.803]], { opacity: 0.5 });
-    var soilsOverlay = L.imageOverlay('./assets/overlay_soils.png', [[29.470, -81.835], [29.485, -81.803]], { opacity: 0.5 });
-    var parcelsOverlay = L.imageOverlay('./assets/overlay_parcels.png', [[29.470, -81.835], [29.485, -81.803]], { opacity: 0.5 });
+    // Define overlay layers using Marion County and FEMA map services
+    // Parcel boundaries from the Marion County Property Appraiser via the City of Ocala GIS MapServer
+    var parcelsLayer = L.esri.dynamicMapLayer({
+      url: 'https://gis.ocalafl.org/arcgis/rest/services/Public/Parcels/MapServer',
+      opacity: 0.6
+    });
 
-    // Add layer controls
-    var overlays = {
-      'Flood Zones': floodOverlay,
-      'Soil Types': soilsOverlay,
-      'Parcel Boundaries': parcelsOverlay
+    // FEMA flood zones from the Marion County GIS open data site (MapServer)
+    var floodLayer = L.esri.dynamicMapLayer({
+      url: 'https://services1.arcgis.com/oMGpBoZpy1Db2sAl/arcgis/rest/services/FEMA_Flood_Zones_2017/MapServer',
+      opacity: 0.5
+    });
+
+    // Define overlay collection for the layer control
+    var overlayMaps = {
+      'Parcel Boundaries': parcelsLayer,
+      'Flood Zones (2017)': floodLayer
     };
 
-    L.control.layers(null, overlays).addTo(map);
+    // Add layer control to the map
+    L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
 
-    // Add the overlays to the map by default
-    floodOverlay.addTo(map);
-    soilsOverlay.addTo(map);
-    parcelsOverlay.addTo(map);
+    // Display both overlays by default
+    parcelsLayer.addTo(map);
+    floodLayer.addTo(map);
   </script>
 </body>
 </html>
