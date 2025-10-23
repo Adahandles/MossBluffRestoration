@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moss Bluff Restoration Project</title>
   <!-- Leaflet base CSS (loaded from a more reliable CDN) -->
@@ -188,7 +188,6 @@
       }
     });
 
-    
     // Define additional basemaps using Esri's basemap layers.  These tiles are served from
     // services.arcgisonline.com, which is accessible in the deployment environment.  The
     // "Topographic" layer provides shaded relief and contour lines, while the
@@ -218,14 +217,22 @@
     // We'll store references to parcel layers so we can zoom to their bounds once both are loaded
     var userParcelsLayer;
     var govParcelsLayer;
+    var citraParcelsLayer;
+    var orangeSpringsLayer; // Layer for Orange Springs project
     // Flag to ensure the Land Owners overlay is added only once
     var landOwnersOverlayAdded = false;
 
-    // Helper function to fit the map bounds once both parcel layers are available
+    // Helper function to fit the map bounds once multiple parcel layers are available
     function maybeFitToParcels() {
-      // Fit the map when both land owner and government layers are loaded
-      if (userParcelsLayer && govParcelsLayer) {
-        var bounds = userParcelsLayer.getBounds().extend(govParcelsLayer.getBounds());
+      var bounds = null;
+      // Extend bounds to include any loaded layers.  This ensures the map zooms
+      // appropriately when multiple parcels are present.
+      [userParcelsLayer, govParcelsLayer, citraParcelsLayer, orangeSpringsLayer].forEach(function (layer) {
+        if (layer) {
+          bounds = bounds ? bounds.extend(layer.getBounds()) : layer.getBounds();
+        }
+      });
+      if (bounds) {
         map.fitBounds(bounds);
       }
     }
@@ -280,7 +287,7 @@
         });
         govParcelsLayer.addTo(map);
         layerControl.addOverlay(govParcelsLayer, 'Government Parcels');
-        // Try to fit bounds if both layers are loaded
+        // Try to fit bounds if multiple layers are loaded
         maybeFitToParcels();
       });
 
@@ -318,9 +325,61 @@
             landOwnersOverlayAdded = true;
           }
         }
-        // Try to fit bounds once both land owner and government layers are loaded
+        // Try to fit bounds once multiple layers are loaded
         maybeFitToParcels();
       });
+
+    // Load Citra project parcels from our new GeoJSON file and add them as a distinct overlay
+    fetch('citra_parcels.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        citraParcelsLayer = L.geoJSON(data, {
+          style: function (feature) {
+            // Choose a distinctive color for the Citra parcels
+            return { color: '#0000ff', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Citra Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        citraParcelsLayer.addTo(map);
+        layerControl.addOverlay(citraParcelsLayer, 'Citra Parcels');
+        // Fit map to include Citra parcels as well
+        maybeFitToParcels();
+      });
+
+    // Load Orange Springs project parcels from provided data and add as a distinct overlay
+    fetch('orangesprings.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        orangeSpringsLayer = L.geoJSON(data, {
+          style: function () {
+            // Use a vibrant orange color for Orange Springs
+            return { color: '#ff8c00', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Orange Springs Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        orangeSpringsLayer.addTo(map);
+        layerControl.addOverlay(orangeSpringsLayer, 'Orange Springs Parcels');
+        maybeFitToParcels();
+      });
+
 
   </script>
 </body>
