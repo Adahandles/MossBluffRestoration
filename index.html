@@ -198,11 +198,15 @@
     // We'll store references to parcel layers so we can zoom to their bounds once both are loaded
     var userParcelsLayer;
     var govParcelsLayer;
+    var rayonierLayer;
 
     // Helper function to fit the map bounds once both parcel layers are available
     function maybeFitToParcels() {
-      if (userParcelsLayer && govParcelsLayer) {
-        var bounds = userParcelsLayer.getBounds().extend(govParcelsLayer.getBounds());
+      // Fit to bounds only when all three parcel layers are loaded
+      if (userParcelsLayer && govParcelsLayer && rayonierLayer) {
+        var bounds = userParcelsLayer.getBounds()
+          .extend(govParcelsLayer.getBounds())
+          .extend(rayonierLayer.getBounds());
         map.fitBounds(bounds);
       }
     }
@@ -254,6 +258,32 @@
         govParcelsLayer.addTo(map);
         layerControl.addOverlay(govParcelsLayer, 'Government Parcels');
         // Try to fit bounds if both layers are loaded
+        maybeFitToParcels();
+      });
+
+    // Load and highlight the adjacent Rayonier parcel from a GeoJSON file
+    fetch('rayonier_parcel.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        rayonierLayer = L.geoJSON(data, {
+          style: function (feature) {
+            // Use a distinct color (orange) for the adjacent parcel layer
+            return { color: '#ff7800', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        rayonierLayer.addTo(map);
+        layerControl.addOverlay(rayonierLayer, 'Adjacent Parcel');
+        // Try to fit bounds once all parcel layers are loaded
         maybeFitToParcels();
       });
 
