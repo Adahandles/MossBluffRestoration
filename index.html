@@ -168,12 +168,59 @@
       'Flood Zones (2017)': floodLayer
     };
 
-    // Add layer control to the map
-    L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+    // Add layer control to the map and keep a reference so we can add overlays later
+    var layerControl = L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
 
     // Display both overlays by default
     parcelsLayer.addTo(map);
     floodLayer.addTo(map);
+
+    // Load and highlight the user-selected parcels from a GeoJSON file
+    fetch('user_parcels.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        var userParcelsLayer = L.geoJSON(data, {
+          style: function (feature) {
+            return { color: '#e60000', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        userParcelsLayer.addTo(map);
+        layerControl.addOverlay(userParcelsLayer, 'User Parcels');
+      });
+
+    // Load and highlight government parcels from a GeoJSON file
+    fetch('gov_parcels.geojson')
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        var govParcelsLayer = L.geoJSON(data, {
+          style: function (feature) {
+            return { color: '#00782b', weight: 2, fillOpacity: 0.2 };
+          },
+          onEachFeature: function (feature, layer) {
+            var props = feature.properties || {};
+            var name = props.NAME || props.name || 'Parcel';
+            var parcel = props.PARCEL || props.parcel || '';
+            var acres = props.ACRES || props.acres || '';
+            var info = '<strong>' + name + '</strong>';
+            if (parcel) { info += '<br/>Parcel: ' + parcel; }
+            if (acres) { info += '<br/>Acres: ' + acres; }
+            layer.bindPopup(info);
+          }
+        });
+        govParcelsLayer.addTo(map);
+        layerControl.addOverlay(govParcelsLayer, 'Government Parcels');
+      });
+
   </script>
 </body>
 </html>
