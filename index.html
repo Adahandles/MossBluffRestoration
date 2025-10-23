@@ -169,6 +169,25 @@
       'Flood Zones (2017)': floodLayer
     };
 
+    // Some map controls (e.g. the Esri dynamic map layer) do not automatically
+    // hide when toggled via the layer control. To ensure the flood zones layer
+    // can be turned off, listen for overlayadd and overlayremove events and
+    // explicitly add or remove the floodLayer. When the overlay is added,
+    // restore the sublayers; when it is removed, remove it from the map.
+    map.on('overlayadd', function (e) {
+      if (e.name === 'Flood Zones (2017)') {
+        // Add the layer and restore its sublayers
+        floodLayer.setLayers([2, 3, 6, 7]);
+        map.addLayer(floodLayer);
+      }
+    });
+    map.on('overlayremove', function (e) {
+      if (e.name === 'Flood Zones (2017)') {
+        // Remove the layer when toggled off
+        map.removeLayer(floodLayer);
+      }
+    });
+
     // Add layer control to the map and keep a reference so we can add overlays later
     var layerControl = L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
 
