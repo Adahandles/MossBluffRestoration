@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑​8" />
+  <meta charset="UTF‑8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Moss Bluff Restoration Project</title>
   <!-- Leaflet base CSS -->
@@ -79,7 +79,7 @@
   </header>
   <nav>
     <a href="#overview">Project Overview</a>
-    <a href="#map">Interactive Map</a>
+    <a href="#map-section">Interactive Map</a>
     <a href="#documents">Documents</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -94,7 +94,7 @@
       </p>
     </section>
 
-    <<a href="#map-section">Interactive Map</a> id="map">
+    <section id="map-section">
       <h2>Interactive Restoration Map</h2>
       <p>
         Use the map below to explore overlays showing flood zones and parcel boundaries. Toggle layers on or off to visualize
@@ -159,7 +159,7 @@
     // FEMA flood zones from the Marion County GIS open data site (MapServer)
     var floodLayer = L.esri.dynamicMapLayer({
       // Updated to use the Marion County GIS server rather than ArcGIS Online.
-      // The previous URL (services1.arcgis.com) returned an Invalid URL error【435599546273009†L0-L8】.
+    // The previous URL (services1.arcgis.com) returned an Invalid URL error.
       url: 'https://gis.marionfl.org/public/rest/services/General/Flood_Zones/MapServer',
       opacity: 0.5
     });
